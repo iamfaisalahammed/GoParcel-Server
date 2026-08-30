@@ -81,6 +81,55 @@ async function run() {
       const result = await usersCollection.insertOne(user);
       res.send(result);
     });
+    app.get("/users", verifyFBToken, async (req, res) => {
+      const result = await usersCollection.find().toArray();
+      res.send(result);
+    });
+
+    // Make Admin
+    app.patch("/users/admin/:id", verifyFBToken, async (req, res) => {
+      const { id } = req.params;
+
+      const result = await usersCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            role: "admin",
+          },
+        },
+      );
+
+      res.send(result);
+    });
+    // Removed Admin
+    app.patch("/users/remove-admin/:id", verifyFBToken, async (req, res) => {
+      const { id } = req.params;
+
+      const result = await usersCollection.updateOne(
+        { _id: new ObjectId(id) },
+        {
+          $set: {
+            role: "user",
+          },
+        },
+      );
+
+      res.send(result);
+    });
+
+    app.get("/users/:email/role", verifyFBToken, async (req, res) => {
+      const email = req.params.email;
+
+      const user = await usersCollection.findOne({ email });
+
+      if (!user) {
+        return res.status(404).send({ role: "user" });
+      }
+
+      res.send({
+        role: user.role || "user",
+      });
+    });
 
     // !------------------------Riders Related Api---------------------------------------------
     app.get("/riders", async (req, res) => {
