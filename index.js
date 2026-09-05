@@ -8,21 +8,11 @@ const port = process.env.PORT || 3000;
 
 const crypto = require("crypto");
 
-// const admin = require("firebase-admin");
-
-// const serviceAccount = require("./goparcel-aea49-firebase-adminsdk-fbsvc-0d2735d7ac.json");
-
-// admin.initializeApp({
-//   credential: admin.credential.cert(serviceAccount)
-// });
-
 function generateTrackingId() {
-  const prefix = "PRCL"; // your brand prefix
+  const prefix = "PRCL";
 
-  // YYYYMMDD
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, "");
 
-  // 6-char random hex
   const random = crypto.randomBytes(3).toString("hex").toUpperCase();
 
   return `${prefix}-${date}-${random}`;
@@ -37,11 +27,6 @@ const verifyFBToken = async (req, res, next) => {
   if (!token) {
     return res.status(401).send({ message: "unauthorized access" });
   }
-  // try {
-  //   const idToken = token.split("")[1];
-  //   const decoded = await admin.auth().verifyFBToken(idToken);
-  //   console.log("decoded in the token", decoded);
-  // } catch (err) {}
 
   next();
 };
@@ -331,8 +316,6 @@ async function run() {
 
         res.send(result);
       } catch (error) {
-        console.log("Delivery per day Error:", error);
-
         res.status(500).send({
           success: false,
           message: error.message,
@@ -400,8 +383,6 @@ async function run() {
           riderResult,
         });
       } catch (error) {
-        console.log(error);
-
         res.status(500).send({
           success: false,
           message: error.message,
@@ -501,7 +482,6 @@ async function run() {
 
         res.send(result);
       } catch (error) {
-        console.log("Status Update Error:", error);
         res.status(500).send({
           message: error.message,
         });
@@ -670,10 +650,10 @@ async function run() {
     });
 
     // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!",
-    );
+    // await client.db("admin").command({ ping: 1 });
+    // console.log(
+    //   "Pinged your deployment. You successfully connected to MongoDB!",
+    // );
   } finally {
     // Ensures that the client will close when you finish/error
     // await client.close();
